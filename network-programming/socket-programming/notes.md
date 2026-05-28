@@ -1,0 +1,7 @@
+Learnings from ChatGPT AI :P -
+
+When forking using `fork()`, a copy of the file descriptor (FD) table of the parent is made for the child. The file descriptor table is maintained at the kernel side, and the programs only have the index of the file descriptor table, and the index is the file descriptor integer that the program has. The index is used to make system calls and the kernel finds out the actual reference using the index and the file descriptor table to get access to the file. If the file descriptor refers to a socket, the file descriptor table has references to the kernel socket object. When forking using `fork()`, the child process gets a copy of the file descriptor (FD) table of the parent process and any socket references are shared - so, the file descriptor tables are separate but are copies (same copy) but the references to the socket are the same - so, they refer to the same kernel socket object reference. Only if all the file descriptor to a kernel socket object references are removed, only then the kernel destroy the socket, or else the socket remains till there's at least one kernel socket object reference. The kernel keeps track of the reference count on the socket for the kernel socket object references. When reference count becomes 0, it does the cleanup and destroys the socket
+
+---
+
+When sockets are not explicitly closed using `close()`, the kernel still closes them when the process exits. This is kinda like garbage collection I guess. And when there are no references remaining for a socket, the kernel destroys the socket
