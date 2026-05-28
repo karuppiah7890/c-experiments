@@ -93,6 +93,8 @@ int main()
             exit(EXIT_FAILURE);
         }
 
+        // fork() to handle client connections separately using separate
+        // processes - child processes
         pid_t pid = fork();
 
         if (pid == 0)
