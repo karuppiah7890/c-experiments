@@ -88,8 +88,14 @@ int main()
 
     printf("Response sent\n");
 
-    close(client_socket);
-    close(server_fd);
+    if (close(client_socket) < 0)
+    {
+        perror("error closing client socket file descriptor");
+    }
+    if (close(server_fd) < 0)
+    {
+        perror("error closing client socket file descriptor");
+    }
 
     return 0;
 }

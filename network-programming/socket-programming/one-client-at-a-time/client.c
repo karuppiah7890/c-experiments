@@ -38,7 +38,10 @@ int main()
                 sizeof(server_addr)) < 0)
     {
         perror("connect failed");
-        close(sock);
+        if (close(sock) < 0)
+        {
+            perror("error closing client socket file descriptor");
+        }
         exit(EXIT_FAILURE);
     }
 
@@ -53,7 +56,10 @@ int main()
 
     printf("Server replied: %s\n", buffer);
 
-    close(sock);
+    if (close(sock) < 0)
+    {
+        perror("error closing client socket file descriptor");
+    }
 
     return 0;
 }

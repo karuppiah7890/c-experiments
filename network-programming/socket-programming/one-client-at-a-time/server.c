@@ -99,10 +99,14 @@ int main()
 
         printf("Response sent\n");
 
-        close(client_socket);
+        if (close(client_socket) < 0) {
+            perror("error closing client socket file descriptor");
+        }
     }
 
-    close(server_fd);
+    if (close(server_fd) < 0) {
+        perror("error closing server socket file descriptor");
+    }
 
     return 0;
 }
