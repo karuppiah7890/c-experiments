@@ -110,15 +110,6 @@ int main()
         pthread_create(&tid, NULL, handle_client, &client_socket);
 
         pthread_detach(tid);
-
-        // As the server process does not require the client socket
-        // file descriptor as the client has access to it and child
-        // process has reference to the kernel socket object so the
-        // socket is not destroyed until all references are removed
-        if (close(client_socket) < 0)
-        {
-            perror("error closing client socket file descriptor in parent process");
-        }
     }
 
     if (close(server_fd) < 0)

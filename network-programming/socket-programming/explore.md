@@ -14,6 +14,16 @@ char *response = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n";
 
 ---
 
+Different errors:
+- `curl: (52) Empty reply from server`
+- `curl: (1) Received HTTP/0.9 when not allowed`
+- `curl: (56) Recv failure: Connection reset by peer`
+- In thread-per-client server side - `error closing client socket file descriptor in child process: Bad file descriptor` - This was because the socket was closed using `close()` before reading from it or writing to it
+    - Not able to read on server side or client side about what the other said
+        - This was because the socket was closed using `close()` before reading from it or writing to it
+
+---
+
 Server handling multiple clients:
 
 1. One client only at a time - Tried one version
