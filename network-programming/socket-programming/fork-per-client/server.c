@@ -97,6 +97,13 @@ int main()
         // processes - child processes
         pid_t pid = fork();
 
+        if (pid == -1)
+        {
+            // Error handling if fork() fails
+            perror("fork failed");
+            exit(EXIT_FAILURE);
+        }
+
         if (pid == 0)
         {
             // Child process
