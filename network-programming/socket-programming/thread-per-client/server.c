@@ -9,7 +9,7 @@
 
 #define PORT 8080
 
-void handle_client(void *arg)
+void *handle_client(void *arg)
 {
     int client_socket = *(int *)arg;
     char buffer[1024] = {0};
@@ -36,6 +36,8 @@ void handle_client(void *arg)
     {
         perror("error closing client socket file descriptor in child process");
     }
+
+    return NULL;
 }
 
 int main()
