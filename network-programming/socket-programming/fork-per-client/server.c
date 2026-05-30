@@ -135,6 +135,31 @@ int main()
 
             exit(0);
         }
+        else
+        {
+            // This block is executed by the parent process
+
+            // Not waiting for the child process causes the child process to finish (exit) and become zombie processes in the process list - check using `ps aux` command and you will see processes with status `Z` and the process name with the keyword `defunct`
+
+            // If we wait for the child process to complete in the main thread, then the server will be stuck waiting for the child process to complete before accepting another connection. So, it becomes a blocking call to use `waitpid()`
+            // int status;
+            // printf("Parent process (PID: %d) created child (PID: %d) and is waiting for it to finish.\n", getpid(), pid);
+
+            // // 3. Wait for the child process to terminate
+            // if (waitpid(pid, &status, 0) == -1)
+            // {
+            //     perror("waitpid failed");
+            // }
+
+            // if (WIFEXITED(status))
+            // {
+            //     printf("Child process exited with status %d.\n", WEXITSTATUS(status));
+            // }
+            // else
+            // {
+            //     printf("Child process terminated abnormally.\n");
+            // }
+        }
 
         // As the server process does not require the client socket
         // file descriptor as the client has access to it and child
