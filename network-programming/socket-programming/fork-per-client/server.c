@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
+#include <pthread.h>
 #include <sys/socket.h>
+#include <sys/wait.h>
 #include <netinet/in.h>
 
 #define PORT 8080
@@ -30,6 +31,30 @@ void handle_client(int client_socket)
     send(client_socket, response, strlen(response), 0);
 
     printf("Response sent\n");
+}
+
+void *wait_for_child_process(void *arg)
+{
+    pid_t pid = *(pid_t *)arg;
+    printf("Waiting on child process ID: %d\n", pid);
+    int status;
+
+    // Wait for the child process to terminate
+    if (waitpid(pid, &status, 0) == -1)
+    {
+        perror("waitpid failed");
+    }
+
+    if (WIFEXITED(status))
+    {
+        printf("Child process %d exited with status %d.\n", pid, WEXITSTATUS(status));
+    }
+    else
+    {
+        printf("Child process %d terminated abnormally.\n", pid);
+    }
+
+    return NULL;
 }
 
 int main()
@@ -147,24 +172,15 @@ int main()
 
             // Not waiting for the child process causes the child process to finish (exit) and become zombie processes in the process list - check using `ps aux` command and you will see processes with status `Z` and the process name with the keyword `defunct`
 
-            // If we wait for the child process to complete in the main thread, then the server will be stuck waiting for the child process to complete before accepting another connection. So, it becomes a blocking call to use `waitpid()`
-            // int status;
-            // printf("Parent process (PID: %d) created child (PID: %d) and is waiting for it to finish.\n", getpid(), pid);
+            // If we wait for the child process to complete in the main thread, then the server will be stuck waiting for the child process to complete before accepting another client connection. So, it becomes a blocking call to use `waitpid()`
 
-            // // 3. Wait for the child process to terminate
-            // if (waitpid(pid, &status, 0) == -1)
-            // {
-            //     perror("waitpid failed");
-            // }
+            // So, we move the waiting to a thread! Not ideal or great, but it's the least we can do - better than not waiting at all causing zombie processes to build up in the process list cluttering the process list
 
-            // if (WIFEXITED(status))
-            // {
-            //     printf("Child process exited with status %d.\n", WEXITSTATUS(status));
-            // }
-            // else
-            // {
-            //     printf("Child process terminated abnormally.\n");
-            // }
+            pthread_t tid;
+
+            pthread_create(&tid, NULL, wait_for_child_process, &pid);
+
+            pthread_detach(tid);
         }
 
         // As the server process does not require the client socket
