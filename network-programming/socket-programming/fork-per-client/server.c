@@ -138,6 +138,7 @@ int main()
         else
         {
             // This block is executed by the parent process
+            printf("pid of child process is: %d\n", pid);
 
             // Not waiting for the child process causes the child process to finish (exit) and become zombie processes in the process list - check using `ps aux` command and you will see processes with status `Z` and the process name with the keyword `defunct`
 
