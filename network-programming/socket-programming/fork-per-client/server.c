@@ -17,6 +17,11 @@ void handle_client(int client_socket)
     printf("Client Socket File Descriptor: %d\n", client_socket);
 
     // 5. Read data from client
+    // We read only 1024 bytes - which is good if the client sends less than
+    // that, but if the client sends more than that, we need to read more
+    // times using `read()` or `recv()` using a loop till the
+    // received bytes is 0. The return value of `read()` and `recv()` is
+    // the number of bytes received
     read(client_socket, buffer, sizeof(buffer));
     printf("Client says: %s\n", buffer);
 
