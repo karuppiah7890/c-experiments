@@ -15,7 +15,10 @@ void *handle_client(void *arg)
         "worker. addr=%p fd=%d\n",
         arg,
         *(int *)arg);
+
     int client_socket = *(int *)arg;
+    free(arg);
+
     char buffer[1024] = {0};
 
     printf("Client connected!\n");
@@ -99,12 +102,13 @@ int main()
 
     while (1)
     {
+        int *client_socket = malloc(sizeof(int));
         // 4. Accept a client connection
-        client_socket = accept(server_fd,
-                               (struct sockaddr *)&address,
-                               (socklen_t *)&addrlen);
+        *client_socket = accept(server_fd,
+                                (struct sockaddr *)&address,
+                                (socklen_t *)&addrlen);
 
-        if (client_socket < 0)
+        if (*client_socket < 0)
         {
             perror("accept failed");
             exit(EXIT_FAILURE);
@@ -112,12 +116,12 @@ int main()
 
         printf(
             "accept. fd=%d addr=%p\n",
-            client_socket,
-            (void *)&client_socket);
+            *client_socket,
+            (void *)client_socket);
 
         pthread_t tid;
 
-        pthread_create(&tid, NULL, handle_client, &client_socket);
+        pthread_create(&tid, NULL, handle_client, client_socket);
 
         pthread_detach(tid);
     }
