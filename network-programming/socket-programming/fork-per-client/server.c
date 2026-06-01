@@ -9,6 +9,26 @@
 
 #define PORT 8080
 
+void print_sockaddr_in(const struct sockaddr_in *addr)
+{
+    char ip_str[INET_ADDRSTRLEN]; // Buffer to hold the IPv4 string
+
+    // 1. Convert the binary IP address to a human-readable string
+    if (inet_ntop(AF_INET, &(addr->sin_addr), ip_str, INET_ADDRSTRLEN) == NULL)
+    {
+        perror("inet_ntop failed");
+        return;
+    }
+
+    // 2. Convert the port from network byte order to host byte order
+    uint16_t port = ntohs(addr->sin_port);
+
+    // 3. Print the results
+    printf("IPv4 Address: %s\n", ip_str);
+    printf("Port        : %d\n", port);
+    printf("Family      : %d (AF_INET)\n", addr->sin_family);
+}
+
 void handle_client(int client_socket)
 {
     char buffer[1024] = {0};
@@ -112,16 +132,24 @@ int main()
 
     while (1)
     {
+        struct sockaddr_in client_address;
+        int client_addrlen;
         // 4. Accept a client connection
         client_socket = accept(server_fd,
-                               (struct sockaddr *)&address,
-                               (socklen_t *)&addrlen);
+                               (struct sockaddr *)&client_address,
+                               (socklen_t *)&client_addrlen);
 
         if (client_socket < 0)
         {
             perror("accept failed");
             exit(EXIT_FAILURE);
         }
+
+        printf("Client connected!\n");
+
+        printf("Client Socket File Descriptor: %d\n", client_socket);
+
+        print_sockaddr_in(&client_address);
 
         // fork() to handle client connections separately using separate
         // processes - child processes
