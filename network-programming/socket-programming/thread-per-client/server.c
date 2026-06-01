@@ -36,6 +36,8 @@ void *handle_client(void *arg)
 
     // 6. Send response
     char *response = "Hello from server";
+    // For HTTP server:
+    // char *response = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n";
     send(client_socket, response, strlen(response), 0);
 
     printf("Response sent\n");
