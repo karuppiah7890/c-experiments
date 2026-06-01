@@ -11,6 +11,10 @@
 
 void *handle_client(void *arg)
 {
+    printf(
+        "worker. addr=%p fd=%d\n",
+        arg,
+        *(int *)arg);
     int client_socket = *(int *)arg;
     char buffer[1024] = {0};
 
@@ -105,6 +109,12 @@ int main()
             perror("accept failed");
             exit(EXIT_FAILURE);
         }
+
+        printf(
+            "accept. fd=%d addr=%p\n",
+            client_socket,
+            (void *)&client_socket);
+
         pthread_t tid;
 
         pthread_create(&tid, NULL, handle_client, &client_socket);
