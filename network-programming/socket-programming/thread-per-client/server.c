@@ -121,9 +121,16 @@ int main()
 
         pthread_t tid;
 
-        pthread_create(&tid, NULL, handle_client, client_socket);
+        int status = pthread_create(&tid, NULL, handle_client, client_socket);
 
-        pthread_detach(tid);
+        if (status != 0)
+        {
+            fprintf(stderr,
+                    "pthread_create failed: %s\n",
+                    strerror(status));
+        } else {
+            pthread_detach(tid);
+        }
     }
 
     if (close(server_fd) < 0)
