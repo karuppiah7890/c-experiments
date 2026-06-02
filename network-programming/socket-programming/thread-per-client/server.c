@@ -145,8 +145,6 @@ int main()
 
         print_sockaddr_in(&client_address);
 
-        print_sockaddr_in(&client_address);
-
         printf(
             "accept. fd=%d addr=%p\n",
             *client_socket,
