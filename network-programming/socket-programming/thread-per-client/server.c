@@ -141,7 +141,7 @@ int main()
 
         printf("Client connected!\n");
 
-        printf("Client Socket File Descriptor: %d\n", client_socket);
+        printf("Client Socket File Descriptor: %d\n", *client_socket);
 
         print_sockaddr_in(&client_address);
 
