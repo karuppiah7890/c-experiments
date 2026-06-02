@@ -217,7 +217,6 @@ int main()
             }
             else
             {
-
                 pthread_detach(tid);
             }
         }
