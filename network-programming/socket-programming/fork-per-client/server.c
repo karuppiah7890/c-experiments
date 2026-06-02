@@ -206,9 +206,19 @@ int main()
 
             pthread_t tid;
 
-            pthread_create(&tid, NULL, wait_for_child_process, &pid);
+            int status = pthread_create(&tid, NULL, wait_for_child_process, &pid);
 
-            pthread_detach(tid);
+            if (status != 0)
+            {
+                fprintf(stderr,
+                        "pthread_create failed: %s\n",
+                        strerror(status));
+            }
+            else
+            {
+
+                pthread_detach(tid);
+            }
         }
 
         // As the server process does not require the client socket
