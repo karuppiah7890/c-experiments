@@ -140,6 +140,14 @@ int main()
 
     printf("Server listening on port %d...\n", PORT);
 
+    pthread_attr_t attr;
+    // TODO: Understand how this helps and if this size is enough for our
+    // use case by checking usage in general with default 8MB size
+    // Initialize attributes and set minimum stack size (e.g., 16KB)
+    pthread_attr_init(&attr);
+    // TODO: Use the constant that specifies the minimum
+    pthread_attr_setstacksize(&attr, 16384);
+
     while (1)
     {
         struct sockaddr_in client_address;
@@ -172,7 +180,7 @@ int main()
 
         pthread_t tid;
 
-        int status = pthread_create(&tid, NULL, handle_client, client_socket);
+        int status = pthread_create(&tid, &attr, handle_client, client_socket);
 
         if (status != 0)
         {
