@@ -5,3 +5,30 @@ When forking using `fork()`, a copy of the file descriptor (FD) table of the par
 ---
 
 When sockets are not explicitly closed using `close()`, the kernel still closes them when the process exits. This is kinda like garbage collection I guess. And when there are no references remaining for a socket, the kernel destroys the socket
+
+---
+
+The max value of somaxconn (SOMAXCONN) is `2147483647` or 2,147,483,647 and that's around 2 Billion
+
+The second argument of `listen()` system call is called `backlog` and the max value of `backlog` is SOMAXCONN
+
+Read more about `backlog` in `man listen`
+
+Check it out using `sysctl` or `cat`
+
+```bash
+sysctl net.core.somaxconn
+
+cat /proc/sys/net/core/somaxconn
+```
+
+And update it using `sysctl` or `echo`
+
+```bash
+sysctl net.core.somaxconn
+
+cat /proc/sys/net/core/somaxconn
+```
+
+And these changes reset on reboot. For permanent changes to SOMAXCONN value - you need to write the configuration to `/etc/sysctl.conf` file with the line `net.core.somaxconn = 1024` for example
+
