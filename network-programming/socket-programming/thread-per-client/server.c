@@ -10,41 +10,52 @@
 
 #define PORT 8080
 
+#define DEBUG 0
+
 void print_sockaddr_in(const struct sockaddr_in *addr)
 {
-    char ip_str[INET_ADDRSTRLEN]; // Buffer to hold the IPv4 string
-
-    // 1. Convert the binary IP address to a human-readable string
-    if (inet_ntop(AF_INET, &(addr->sin_addr), ip_str, INET_ADDRSTRLEN) == NULL)
+    if (DEBUG)
     {
-        perror("inet_ntop failed");
-        return;
+        char ip_str[INET_ADDRSTRLEN]; // Buffer to hold the IPv4 string
+
+        // 1. Convert the binary IP address to a human-readable string
+        if (inet_ntop(AF_INET, &(addr->sin_addr), ip_str, INET_ADDRSTRLEN) == NULL)
+        {
+            perror("inet_ntop failed");
+            return;
+        }
+
+        // 2. Convert the port from network byte order to host byte order
+        uint16_t port = ntohs(addr->sin_port);
+
+        // 3. Print the results
+        printf("IPv4 Address: %s\n", ip_str);
+        printf("Port        : %d\n", port);
+        printf("Family      : %d (AF_INET)\n", addr->sin_family);
     }
-
-    // 2. Convert the port from network byte order to host byte order
-    uint16_t port = ntohs(addr->sin_port);
-
-    // 3. Print the results
-    printf("IPv4 Address: %s\n", ip_str);
-    printf("Port        : %d\n", port);
-    printf("Family      : %d (AF_INET)\n", addr->sin_family);
 }
 
 void *handle_client(void *arg)
 {
-    printf(
-        "worker. addr=%p fd=%d\n",
-        arg,
-        *(int *)arg);
+    if (DEBUG)
+    {
+        printf(
+            "worker. addr=%p fd=%d\n",
+            arg,
+            *(int *)arg);
+    }
 
     int client_socket = *(int *)arg;
     free(arg);
 
     char buffer[1024] = {0};
 
-    printf("Client connected!\n");
+    if (DEBUG)
+    {
+        printf("Client connected!\n");
 
-    printf("Client Socket File Descriptor: %d\n", client_socket);
+        printf("Client Socket File Descriptor: %d\n", client_socket);
+    }
 
     // 5. Read data from client
     // We read only 1024 bytes - which is good if the client sends less than
@@ -53,7 +64,10 @@ void *handle_client(void *arg)
     // received bytes is 0. The return value of `read()` and `recv()` is
     // the number of bytes received
     read(client_socket, buffer, sizeof(buffer));
-    printf("Client says: %s\n", buffer);
+    if (DEBUG)
+    {
+        printf("Client says: %s\n", buffer);
+    }
 
     // 6. Send response
     char *response = "Hello from server";
@@ -61,7 +75,10 @@ void *handle_client(void *arg)
     // char *response = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n";
     send(client_socket, response, strlen(response), 0);
 
-    printf("Response sent\n");
+    if (DEBUG)
+    {
+        printf("Response sent\n");
+    }
     if (close(client_socket) < 0)
     {
         perror("error closing client socket file descriptor in child process");
@@ -139,16 +156,19 @@ int main()
             exit(EXIT_FAILURE);
         }
 
-        printf("Client connected!\n");
+        if (DEBUG)
+        {
+            printf("Client connected!\n");
 
-        printf("Client Socket File Descriptor: %d\n", *client_socket);
+            printf("Client Socket File Descriptor: %d\n", *client_socket);
 
-        print_sockaddr_in(&client_address);
+            print_sockaddr_in(&client_address);
 
-        printf(
-            "accept. fd=%d addr=%p\n",
-            *client_socket,
-            (void *)client_socket);
+            printf(
+                "accept. fd=%d addr=%p\n",
+                *client_socket,
+                (void *)client_socket);
+        }
 
         pthread_t tid;
 
