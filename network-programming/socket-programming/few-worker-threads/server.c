@@ -245,6 +245,8 @@ int main()
         {
             pthread_detach(tid);
         }
+
+        i++;
     }
 
     while (1)
