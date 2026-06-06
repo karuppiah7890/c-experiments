@@ -93,7 +93,6 @@ int main()
     int server_fd;
     int client_socket;
     struct sockaddr_in address;
-    int addrlen = sizeof(address);
 
     // 1. Create socket
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -151,7 +150,7 @@ int main()
     while (1)
     {
         struct sockaddr_in client_address;
-        int client_addrlen;
+        int client_addrlen = sizeof(client_address);
         int *client_socket = malloc(sizeof(int));
         // 4. Accept a client connection
         *client_socket = accept(server_fd,

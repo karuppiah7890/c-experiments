@@ -34,7 +34,6 @@ int main()
     int server_fd;
     int client_socket;
     struct sockaddr_in address;
-    int addrlen = sizeof(address);
 
     char buffer[1024] = {0};
 
@@ -84,7 +83,7 @@ int main()
     printf("Server listening on port %d...\n", PORT);
 
     struct sockaddr_in client_address;
-    int client_addrlen;
+    int client_addrlen = sizeof(client_address);
     // 4. Accept a client connection
     client_socket = accept(server_fd,
                            (struct sockaddr *)&client_address,
