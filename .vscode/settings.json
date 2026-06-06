@@ -1,5 +1,7 @@
 {
     "cSpell.words": [
-        "forkstat"
-    ]
+        "forkstat",
+        "ltrace"
+    ],
+    "C_Cpp.errorSquiggles": "enabled"
 }
