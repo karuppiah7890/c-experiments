@@ -2,13 +2,19 @@ Use the following for debugging
 
 ```bash
 sudo apt update
-sudo apt install strace
+sudo apt install strace ltrace
 
 strace -h
 # OR
 strace --help
 
 strace -c ./server
+
+ltrace -h
+# OR
+ltrace --help
+
+ltrace -c ./server
 ```
 
 ```bash
