@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 struct node
 {
@@ -11,7 +12,13 @@ struct queue
 {
     struct node *head;
     struct node *tail;
+    int size;
 };
+
+bool is_queue_empty(struct queue *q)
+{
+    return q->size == 0;
+}
 
 void enqueue(struct queue *q, int value)
 {
@@ -25,11 +32,13 @@ void enqueue(struct queue *q, int value)
         // here head MUST also be NULL actually
         q->head = node;
         q->tail = q->head;
+        q->size = 1;
         return;
     }
 
     q->tail->next = node;
     q->tail = q->tail->next; // same as: q->tail = node;
+    q->size++;
 }
 
 int dequeue(struct queue *q)
@@ -47,6 +56,7 @@ int dequeue(struct queue *q)
         free(q->head);
         q->head = NULL;
         q->tail = NULL;
+        q->size = 0;
         return value;
     }
 
@@ -55,6 +65,7 @@ int dequeue(struct queue *q)
     int value = top->value;
     top->next = NULL;
     free(top);
+    q->size--;
     return value;
 }
 
@@ -108,17 +119,27 @@ int main()
         return 1;
     }
 
+    printf("queue size: %d. is queue empty? %d\n\n", q->size, is_queue_empty(q));
+
     enqueue(q, 5);
 
+    printf("queue size: %d. is queue empty? %d\n\n", q->size, is_queue_empty(q));
+
     print(q);
+
+    printf("queue size: %d. is queue empty? %d\n\n", q->size, is_queue_empty(q));
 
     enqueue(q, 6);
 
     print(q);
 
+    printf("queue size: %d. is queue empty? %d\n\n", q->size, is_queue_empty(q));
+
     enqueue(q, 7);
 
     print(q);
+
+    printf("queue size: %d. is queue empty? %d\n\n", q->size, is_queue_empty(q));
 
     printf("checking queue details after enqueueing\n");
 
@@ -130,17 +151,25 @@ int main()
 
     print(q);
 
+    printf("queue size: %d. is queue empty? %d\n\n", q->size, is_queue_empty(q));
+
     printf("dequeued value: %d\n", dequeue(q)); // 5
 
     print(q);
+
+    printf("queue size: %d. is queue empty? %d\n\n", q->size, is_queue_empty(q));
 
     printf("dequeued value: %d\n", dequeue(q)); // 6
 
     print(q);
 
+    printf("queue size: %d. is queue empty? %d\n\n", q->size, is_queue_empty(q));
+
     printf("dequeued value: %d\n", dequeue(q)); // 7
 
     print(q);
+
+    printf("queue size: %d. is queue empty? %d\n\n", q->size, is_queue_empty(q));
 
     printf("checking queue details after dequeueing\n");
 
