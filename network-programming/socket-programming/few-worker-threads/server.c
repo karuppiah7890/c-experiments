@@ -103,29 +103,6 @@ void print_sockaddr_in(const struct sockaddr_in *addr)
     }
 }
 
-struct queue *socket_queue;
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
-
-void *worker(void *arg)
-{
-    for (;;)
-    {
-        pthread_mutex_lock(&mutex);
-
-        while (is_queue_empty(socket_queue))
-        {
-            pthread_cond_wait(&cond, &mutex);
-        }
-
-        int fd = dequeue(socket_queue);
-
-        pthread_mutex_unlock(&mutex);
-
-        handle_client(fd);
-    }
-}
-
 void handle_client(int client_socket)
 {
 
@@ -164,8 +141,29 @@ void handle_client(int client_socket)
     {
         perror("error closing client socket file descriptor in child process");
     }
+}
 
-    return NULL;
+struct queue *socket_queue;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+
+void *worker(void *arg)
+{
+    for (;;)
+    {
+        pthread_mutex_lock(&mutex);
+
+        while (is_queue_empty(socket_queue))
+        {
+            pthread_cond_wait(&cond, &mutex);
+        }
+
+        int fd = dequeue(socket_queue);
+
+        pthread_mutex_unlock(&mutex);
+
+        handle_client(fd);
+    }
 }
 
 int main()
