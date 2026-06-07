@@ -209,7 +209,7 @@ int main()
     }
 
     // 3. Listen for incoming connections
-    if (listen(server_fd, 5) < 0)
+    if (listen(server_fd, SOMAXCONN) < 0)
     {
         perror("listen failed");
         exit(EXIT_FAILURE);
